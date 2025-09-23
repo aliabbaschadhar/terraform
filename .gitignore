@@ -77,3 +77,9 @@ __pycache__/
 
 # Keep README and documentation in repo
 !README.md
+
+# R2 credentials
+access_key = "REPLACE_WITH_R2_ACCESS_KEY"
+secret_key = "REPLACE_WITH_R2_SECRET_KEY"
+
+backend.tf
