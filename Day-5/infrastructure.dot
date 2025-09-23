@@ -1,59 +1,125 @@
-// Terraform Infrastructure - Day 4
-// This is a simple DOT file for generating diagrams with Graphviz
+// AWS Networking Concepts + Terraform Infrastructure
+// Complete AWS networking visualization with real-world analogies
 // Usage: dot -Tpng infrastructure.dot -o infrastructure.png
+//        dot -Tsvg infrastructure.dot -o infrastructure.svg
 
-digraph terraform_infrastructure {
+digraph aws_networking_concepts {
     rankdir=TB;
     node [shape=box, style=rounded];
     
-    // External
-    internet [label="🌍 Internet", shape=ellipse, color=blue];
-    github [label="📦 GitHub\nRepository", color=green];
+    // Title
+    title [label="🏙️ AWS Networking = City Planning System\n\nVPC = Your Private City\nSubnets = Neighborhoods\nSecurity Groups = Personal Bodyguards\nRoute Tables = GPS Navigation\nCIDR = Address System", 
+           shape=plaintext, fontsize=16, fontcolor=blue];
     
-    // Terraform Cloud
-    tf_cloud [label="☁️ Terraform Cloud\nState & Locking", color=purple];
+    // External World
+    internet [label="🌍 INTERNET\n(The Outside World)", shape=ellipse, color=blue, style=filled, fillcolor=lightblue];
     
-    // DigitalOcean
-    subgraph cluster_do {
-        label="DigitalOcean";
-        style=filled;
-        color=lightblue;
-        
-        droplet [label="🖥️ Ubuntu Droplet\nshaku-ka-droplet\ns-1vcpu-1gb\nblr1"];
-        do_spaces [label="📦 DO Spaces\n(Optional Backend)"];
-    }
-    
-    // Cloudflare
-    subgraph cluster_cf {
-        label="Cloudflare";
-        style=filled;
-        color=orange;
-        
-        r2_bucket [label="🗄️ R2 Bucket\nmy-infra\nState Storage"];
-        cdn [label="⚡ CDN/DNS\nServices"];
-    }
-    
-    // Local Development
-    subgraph cluster_local {
-        label="Local Development";
+    // AWS Region (Country)
+    subgraph cluster_region {
+        label="🌍 AWS Region (Country): us-east-1";
         style=filled;
         color=lightgray;
+        fontsize=14;
         
-        tf_files [label="📄 Terraform Files\nmain.tf\nbackend.tf\nvariables.tf"];
-        tf_state [label="💾 Local State\nterraform.tfstate"];
+        // Internet Gateway (City Main Gate)
+        igw [label="🚪 Internet Gateway\n'City Main Gate'\n\nOnly 1 per VPC\nControls ALL in/out traffic", 
+             color=red, style=filled, fillcolor=lightyellow];
+        
+        // VPC (Your Private City)
+        subgraph cluster_vpc {
+            label="🏙️ VPC: 10.0.0.0/16 (Your Private City)\n65,536 possible addresses (houses)";
+            style=filled;
+            color=lightblue;
+            fontsize=12;
+            
+            // Route Table (GPS System)
+            route_table [label="🗺️ Route Table\n'City GPS System'\n\n10.0.0.0/16 → Local\n0.0.0.0/0 → IGW", 
+                        color=purple, style=filled, fillcolor=lavender];
+            
+            // Public Subnet (Beachfront Neighborhood)
+            subgraph cluster_public {
+                label="🏘️ Public Subnet: 10.0.1.0/24\n'Beachfront Neighborhood' (256 addresses)\nHas route to Internet Gateway";
+                style=filled;
+                color=lightgreen;
+                
+                web_server [label="🖥️ Web Server\n10.0.1.10\nPublic IP: 3.x.x.x\n\n🛡️ Security Group:\n• Allow 80 (HTTP) from 0.0.0.0/0\n• Allow 443 (HTTPS) from 0.0.0.0/0\n• Allow 22 (SSH) from MY_IP", 
+                           color=green, style=filled, fillcolor=lightgreen];
+                
+                bastion [label="🔧 Bastion Host\n10.0.1.20\nPublic IP: 18.x.x.x\n\n🛡️ Security Group:\n• Allow 22 (SSH) from MY_IP only\n'SSH Gateway to Private Subnet'", 
+                        color=orange, style=filled, fillcolor=lightyellow];
+            }
+            
+            // Private Subnet (Gated Community)
+            subgraph cluster_private {
+                label="🏘️ Private Subnet: 10.0.2.0/24\n'Gated Community' (256 addresses)\nNo direct internet access";
+                style=filled;
+                color=lightcoral;
+                
+                database [label="🗄️ Database Server\n10.0.2.10\nNo Public IP\n\n🛡️ Security Group:\n• Allow 3306 (MySQL) from Web SG\n• Allow 22 (SSH) from Bastion SG", 
+                         color=red, style=filled, fillcolor=lightcoral];
+                
+                api_server [label="🔐 Internal API\n10.0.2.20\nNo Public IP\n\n🛡️ Security Group:\n• Allow 8080 from Web SG\n• Allow 22 (SSH) from Bastion SG", 
+                           color=red, style=filled, fillcolor=lightcoral];
+            }
+        }
     }
     
-    // Connections
-    internet -> droplet;
-    internet -> cdn;
+    // External Services (Outside the Region)
+    github [label="📦 GitHub Repository\n(Version Control)", color=green, style=filled, fillcolor=lightgreen];
     
-    github -> tf_files;
-    tf_cloud -> tf_files [style=dashed];
+    // CIDR Explanation Box
+    cidr_info [label="🔢 CIDR Cheat Sheet\n\n/8 = 16M addresses (Megacity)\n/16 = 65K addresses (Big City)\n/24 = 256 addresses (Neighborhood)\n/32 = 1 address (One House)\n\nRule: Smaller /number = BIGGER network", 
+               shape=note, color=blue, style=filled, fillcolor=lightcyan];
     
+    // Memory Anchors
+    memory [label="🧠 NEVER FORGET:\n\n• VPC = Your private city\n• Public Subnet = 'Can be Googled'\n• Private Subnet = 'Unlisted number'\n• Security Groups = Personal bodyguards\n• Route Tables = GPS directions\n• IGW = Main city gate", 
+            shape=note, color=green, style=filled, fillcolor=lightgreen];
+    
+    // Terraform Infrastructure (Your Current Setup)
+    subgraph cluster_terraform {
+        label="🔧 Your Current Terraform Setup (Day 4)";
+        style=filled;
+        color=lightsteelblue;
+        
+        tf_cloud [label="☁️ Terraform Cloud\nState & Locking\n(Recommended)", color=purple, style=dashed];
+        
+        subgraph cluster_do {
+            label="DigitalOcean (Similar to AWS)";
+            style=filled;
+            color=lightblue;
+            
+            droplet [label="🖥️ Ubuntu Droplet\nshaku-ka-droplet\ns-1vcpu-1gb\nblr1 region\n\n≈ AWS EC2 Instance"];
+            do_spaces [label="📦 DO Spaces\n(Optional Backend)\n\n≈ AWS S3"];
+        }
+        
+        subgraph cluster_cf {
+            label="Cloudflare";
+            style=filled;
+            color=orange;
+            
+            r2_bucket [label="🗄️ R2 Bucket\nmy-infra\nState Storage\n\n≈ AWS S3"];
+            cdn [label="⚡ CDN/DNS Services\n\n≈ AWS CloudFront"];
+        }
+        
+        tf_files [label="📄 Terraform Files\nmain.tf\nbackend.tf\nvariables.tf\n\nInfrastructure as Code", 
+                 color=gray, style=filled, fillcolor=lightgray];
+    }
+    
+    // Traffic Flow Connections (The Story)
+    internet -> igw [label="1. User requests", color=blue, fontcolor=blue];
+    igw -> route_table [label="2. IGW checks route table", color=purple, fontcolor=purple];
+    route_table -> web_server [label="3. Routes to public subnet", color=green, fontcolor=green];
+    web_server -> database [label="4. App queries database", color=red, fontcolor=red];
+    bastion -> database [label="SSH access", style=dashed, color=orange];
+    bastion -> api_server [label="SSH access", style=dashed, color=orange];
+    
+    // Terraform connections
+    github -> tf_files [label="Code"];
+    tf_cloud -> tf_files [style=dashed, label="State mgmt"];
     tf_files -> droplet [label="provisions"];
     tf_files -> r2_bucket [label="stores state"];
-    tf_files -> cdn [label="configures"];
     
-    r2_bucket -> tf_state [style=dashed, label="remote state"];
-    tf_cloud -> tf_state [style=dashed, label="managed state"];
+    // Layout hints
+    {rank=same; cidr_info; memory}
+    title -> internet;
 }
