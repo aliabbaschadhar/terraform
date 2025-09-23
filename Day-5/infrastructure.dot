@@ -1,0 +1,59 @@
+// Terraform Infrastructure - Day 4
+// This is a simple DOT file for generating diagrams with Graphviz
+// Usage: dot -Tpng infrastructure.dot -o infrastructure.png
+
+digraph terraform_infrastructure {
+    rankdir=TB;
+    node [shape=box, style=rounded];
+    
+    // External
+    internet [label="🌍 Internet", shape=ellipse, color=blue];
+    github [label="📦 GitHub\nRepository", color=green];
+    
+    // Terraform Cloud
+    tf_cloud [label="☁️ Terraform Cloud\nState & Locking", color=purple];
+    
+    // DigitalOcean
+    subgraph cluster_do {
+        label="DigitalOcean";
+        style=filled;
+        color=lightblue;
+        
+        droplet [label="🖥️ Ubuntu Droplet\nshaku-ka-droplet\ns-1vcpu-1gb\nblr1"];
+        do_spaces [label="📦 DO Spaces\n(Optional Backend)"];
+    }
+    
+    // Cloudflare
+    subgraph cluster_cf {
+        label="Cloudflare";
+        style=filled;
+        color=orange;
+        
+        r2_bucket [label="🗄️ R2 Bucket\nmy-infra\nState Storage"];
+        cdn [label="⚡ CDN/DNS\nServices"];
+    }
+    
+    // Local Development
+    subgraph cluster_local {
+        label="Local Development";
+        style=filled;
+        color=lightgray;
+        
+        tf_files [label="📄 Terraform Files\nmain.tf\nbackend.tf\nvariables.tf"];
+        tf_state [label="💾 Local State\nterraform.tfstate"];
+    }
+    
+    // Connections
+    internet -> droplet;
+    internet -> cdn;
+    
+    github -> tf_files;
+    tf_cloud -> tf_files [style=dashed];
+    
+    tf_files -> droplet [label="provisions"];
+    tf_files -> r2_bucket [label="stores state"];
+    tf_files -> cdn [label="configures"];
+    
+    r2_bucket -> tf_state [style=dashed, label="remote state"];
+    tf_cloud -> tf_state [style=dashed, label="managed state"];
+}
