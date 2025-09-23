@@ -1,6 +1,6 @@
 # Let create a simple droplet on digital ocean using terraform.
-
 terraform {
+  # Using provider in required_providers block is used if you to make sure a specific provider version is used.
   required_providers {
     digitalocean = {
       source  = "digitalocean/digitalocean"
