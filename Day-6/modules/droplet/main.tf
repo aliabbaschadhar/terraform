@@ -24,6 +24,7 @@ variable "size_value" {
 variable "image_value" {
   description = "Image to be used in the droplet"
   type        = string
+  default     = "ubuntu-22-04-x64" # Default image if not specified
 }
 
 variable "name_value" {

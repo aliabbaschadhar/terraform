@@ -19,12 +19,19 @@ variable "do_token" {
 
 variable "size_value" {
   description = "Size of the droplet"
-  type        = string
+  type        = map(string)
+
+  default = {
+    "dev"   = "s-2vcpu-2gb"
+    "stage" = "s-1vcpu-1gb"
+    "prod"  = "s-4vcpu-8gb"
+  }
 }
 
 variable "image_value" {
   description = "Image to be used in the droplet"
   type        = string
+  default     = "ubuntu-22-04-x64" # Default image if not specified
 }
 
 variable "name_value" {
@@ -44,7 +51,8 @@ module "droplet_module" {
   image_value  = var.image_value
   name_value   = var.name_value
   region_value = var.region_value
-  size_value   = var.size_value
+  size_value   = lookup(var.size_value, terraform.workspace, "s-2vcpu-2gb") # Default to "s-2vcpu-2gb" if workspace not found
+  # size_value   = var.size_value
 }
 
 # Add this output to expose the module's output
